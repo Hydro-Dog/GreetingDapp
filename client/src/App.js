@@ -83,6 +83,7 @@ function App() {
   });
 
   const handleDepositChange = (e) => {
+    // await contract.deposit()
     setDepositValue(e.target.value);
   };
 
@@ -90,14 +91,22 @@ function App() {
     setGreetingValue(e.target.value);
   };
 
-  const handleDepositSubmit = (e) => {
-    console.log('depositValue: ', depositValue);
+  const handleDepositSubmit = async (e) => {
     e.preventDefault();
+    const depositUpdate = await contract.deposit({
+      value: ethers.utils.parseEther(depositValue),
+    });
+    await depositUpdate.wait();
+    setDepositValue(0);
+    setBalance(depositValue);
   };
 
-  const handleGreetingSubmit = (e) => {
-    console.log('greetingValue: ', greetingValue);
+  const handleGreetingSubmit = async (e) => {
     e.preventDefault();
+    const greetingUpdate = await contract.setGreeting(greetingValue);
+    await greetingUpdate.wait();
+    setGreetingValue('');
+    setGreet(greetingValue);
   };
 
   return (
